@@ -17,7 +17,7 @@ lol = reddit.subreddit('leagueoflegends')
 
 def main():
     getFoundPosts() 
-    print "[INFO] Initiating search"
+    print ("[INFO] Initiating search")
 
     # PUBG
     print "[INFO] Finding patch notes for PUBG..."
@@ -27,7 +27,7 @@ def main():
             if submission.id not in foundPosts: 
                 submit("PUBG", "PC", submission)
             else: 
-                print "[INFO] Most recent post for PUBG already found..."
+                print ("[INFO] Most recent post for PUBG already found...")
             break    
     # HEROES
     print "[INFO] Finding patch notes for HotS..."
@@ -37,7 +37,7 @@ def main():
             if submission.id not in foundPosts: 
                 submit("Heroes of the Storm", "PC", submission)
             else:
-                print "[INFO] Most recent post for HotS already found..."
+                print ("[INFO] Most recent post for HotS already found...")
             break
     # LoL
     print "[INFO] Finding patch notes for LoL..."
@@ -47,20 +47,20 @@ def main():
             if submission.id not in foundPosts: 
                 submit("LoL", "PC", submission)
             else:
-                print "[INFO] Most recent post for LoL already found..."
+                print ("[INFO] Most recent post for LoL already found...")
             break
     # LoL - PBE
-    print "[INFO] Finding patch notes for LoL - PBE..."
+    print ("[INFO] Finding patch notes for LoL - PBE...")
     submissions = lol.submissions(start=submission_interval)
     for submission in submissions:
         if 'PBE Update'.lower() in submission.title.lower():
             if submission.id not in foundPosts: 
                 submit("LoL - PBE", "PC", submission)
             else: 
-                print "[INFO] Most recent post for LoL - PBE already found..."
+                print ("[INFO] Most recent post for LoL - PBE already found...")
             break
 
-    print "[INFO] Finished finding patch notes!"
+    print ("[INFO] Finished finding patch notes!")
 
 def submit(game, platform, submission): 
     usedIds = open("posts.txt", "a")
@@ -70,20 +70,20 @@ def submit(game, platform, submission):
             response = reddit.subreddit("patchnotes").submit(formatTitle(game, submission.title, platform), url=submission.url)
             response.reply("Originally posted by u/" + submission.author.name + "\n\nPlease message me, u/Rodhlann, if something is wrong with this post or you have any suggestions!")
             usedIds.write(submission.id + '\n')
-            print "Id '"+submission.id+"' logged."
+            print ("Id '"+submission.id+"' logged.")
         except APIException as e:
             if e.error_type == 'RATELIMIT':
                 sys.stdout.write("[WARNING] %s%%   \r"%(e))
                 sys.stdout.flush()
             else: 
-                print "[API ERROR] " + e.message
+                print ("[API ERROR] " + e.message)
                 sys.exit()
             time.sleep(30) 
         except Exception as e: 
-            print "[UNCAUGHT ERROR] " + e.message 
+            print ("[UNCAUGHT ERROR] " + e.message)
             sys.exit() 
-    print ""
-    print "[INFO] Submission for " + game + " done!"
+    print ("")
+    print ("[INFO] Submission for " + game + " done!")
     usedIds.close() 
 
 def formatTitle(game, postTitle, platform): 
