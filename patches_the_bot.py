@@ -27,17 +27,14 @@ def main():
 
     # PUBG
     print ("[INFO] Finding patch notes for PUBG...")
-    try:
-        submissions = pubg.submissions(start=submission_interval)
-        for submission in submissions:
-            if 'Early Access -'.lower() in submission.title.lower() and 'Update'.lower() in submission.title.lower():
-                if submission.id not in foundPosts: 
-                    submit("PlayerUnknown's Battlegrounds", "PC", submission)
-                else: 
-                    print ("[INFO] Most recent post for PUBG already found...")
-                break    
-    except Exception as e: 
-        print (e)
+    submissions = pubg.submissions(start=submission_interval)
+    for submission in submissions:
+        if 'Early Access -'.lower() in submission.title.lower() and 'Update'.lower() in submission.title.lower():
+            if submission.id not in foundPosts: 
+                submit("PlayerUnknown's Battlegrounds", "PC", submission)
+            else: 
+                print ("[INFO] Most recent post for PUBG already found...")
+            break    
     # HEROES
     print ("[INFO] Finding patch notes for HotS...")
     submissions = heroes.submissions(start=submission_interval)
