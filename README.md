@@ -16,8 +16,7 @@ The client_id and client_secret are given to you when you create an app on your 
 The username and password are your reddit credentials
 The user_agent is free text to describe your bot/script 
 
-You will also need to create a posts.txt file, as I have not yet implemented my code in a way that auto-generates this
-  - this file contains a list of IDs that are associated to the submissions you have already posted. You should not have to enter any data in this file manually. 
+The posts.txt file is generated automatically on run and contains a list of IDs that are associated to the submissions you have already posted. You should not have to enter any data in this file manually. 
   
 If you would like to add more games to Patches_Bot please contact me and we can move forward with adding those. 
 I would like to have as many games as possible, but I think I will need to refactor to make the program run faster/more efficiently

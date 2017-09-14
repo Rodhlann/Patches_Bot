@@ -3,6 +3,7 @@ import time
 import datetime as dt
 import json
 import sys 
+import os 
 from praw.exceptions import APIException
 
 # 1 Month 
@@ -15,12 +16,8 @@ heroes = reddit.subreddit('heroesofthestorm')
 lol = reddit.subreddit('leagueoflegends')
 
 def main():
+    getFoundPosts() 
     print "[INFO] Initiating search"
-
-    usedIds = open("posts.txt", "r")
-    for id in usedIds:
-        foundPosts.append(id.replace('\n', ''))
-    usedIds.close() 
 
     # PUBG
     print "[INFO] Finding patch notes for PUBG..."
@@ -63,7 +60,6 @@ def main():
                 print "[INFO] Most recent post for LoL - PBE already found..."
             break
 
-    usedIds.close() 
     print "[INFO] Finished finding patch notes!"
 
 def submit(game, platform, submission): 
@@ -93,6 +89,15 @@ def submit(game, platform, submission):
 def formatTitle(game, postTitle, platform): 
     date = str(dt.date.today()).replace('-', '/')
     return "["+game+"] ("+date+") ("+platform+") " + postTitle 
+
+def getFoundPosts():
+    if os.path.exists("posts.txt"): 
+        usedIds = open("posts.txt", "r")
+        for id in usedIds:
+            foundPosts.append(id.replace('\n', ''))
+    else: 
+        usedIds = open("posts.txt", "w+") 
+    usedIds.close() 
 
 main() 
 
