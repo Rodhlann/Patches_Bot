@@ -10,7 +10,13 @@ from praw.exceptions import APIException
 submission_interval = time.mktime((dt.date.today() - dt.timedelta(30)).timetuple())
 foundPosts = []
 
-reddit = praw.Reddit('bot1')
+try: 
+    reddit = praw.Reddit('bot1')
+    reddit.user.me()
+except Exception as e:
+    print ("[UNCAUGHT ERROR] " + e.message)
+    sys.exit() 
+
 pubg = reddit.subreddit('pubattlegrounds')
 heroes = reddit.subreddit('heroesofthestorm')
 lol = reddit.subreddit('leagueoflegends')
@@ -25,7 +31,7 @@ def main():
     for submission in submissions:
         if 'Early Access -'.lower() in submission.title.lower() and 'Update'.lower() in submission.title.lower():
             if submission.id not in foundPosts: 
-                submit("PUBG", "PC", submission)
+                submit("PlayerUnknown's Battlegrounds", "PC", submission)
             else: 
                 print ("[INFO] Most recent post for PUBG already found...")
             break    
@@ -45,7 +51,7 @@ def main():
     for submission in submissions:
         if 'http://euw.leagueoflegends.com/en/news/game-updates/patch/'.lower() in submission.url.lower():
             if submission.id not in foundPosts: 
-                submit("LoL", "PC", submission)
+                submit("League of Legends", "PC", submission)
             else:
                 print ("[INFO] Most recent post for LoL already found...")
             break
@@ -55,7 +61,7 @@ def main():
     for submission in submissions:
         if 'PBE Update'.lower() in submission.title.lower():
             if submission.id not in foundPosts: 
-                submit("LoL - PBE", "PC", submission)
+                submit("League of Legends - PBE", "PC", submission)
             else: 
                 print ("[INFO] Most recent post for LoL - PBE already found...")
             break
@@ -70,7 +76,7 @@ def submit(game, platform, submission):
             response = reddit.subreddit("patchnotes").submit(formatTitle(game, submission.title, platform), url=submission.url)
             response.reply("Originally posted by u/" + submission.author.name + "\n\nPlease message me, u/Rodhlann, if something is wrong with this post or you have any suggestions!")
             usedIds.write(submission.id + '\n')
-            print ("Id '"+submission.id+"' logged.")
+            print ("[INFO] Id '"+submission.id+"' logged.")
         except APIException as e:
             if e.error_type == 'RATELIMIT':
                 sys.stdout.write("[WARNING] %s%%   \r"%(e))
