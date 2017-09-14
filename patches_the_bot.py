@@ -74,7 +74,7 @@ def submit(game, platform, submission):
     while(response == None): 
         try: 
             response = reddit.subreddit("patchnotes").submit(formatTitle(game, submission.title, platform), url=submission.url)
-            response.reply("Originally posted by u/" + submission.author.name + "\n\nPlease message me, u/Rodhlann, if something is wrong with this post or you have any suggestions!")
+            response.reply("Originally posted by u/" + submission.author.name + "\n\nPlease message me if something is wrong with this post or you have any suggestions!")
             usedIds.write(submission.id + '\n')
             print ("[INFO] Id '"+submission.id+"' logged.")
         except APIException as e:
