@@ -20,7 +20,7 @@ def main():
     print ("[INFO] Initiating search")
 
     # PUBG
-    print "[INFO] Finding patch notes for PUBG..."
+    print ("[INFO] Finding patch notes for PUBG...")
     submissions = pubg.submissions(start=submission_interval)
     for submission in submissions:
         if 'Early Access -'.lower() in submission.title.lower() and 'Update'.lower() in submission.title.lower():
@@ -30,7 +30,7 @@ def main():
                 print ("[INFO] Most recent post for PUBG already found...")
             break    
     # HEROES
-    print "[INFO] Finding patch notes for HotS..."
+    print ("[INFO] Finding patch notes for HotS...")
     submissions = heroes.submissions(start=submission_interval)
     for submission in submissions:
         if 'Heroes of the Storm Patch Notes'.lower() in submission.title.lower():
@@ -40,7 +40,7 @@ def main():
                 print ("[INFO] Most recent post for HotS already found...")
             break
     # LoL
-    print "[INFO] Finding patch notes for LoL..."
+    print ("[INFO] Finding patch notes for LoL...")
     submissions = lol.submissions(start=submission_interval)
     for submission in submissions:
         if 'http://euw.leagueoflegends.com/en/news/game-updates/patch/'.lower() in submission.url.lower():
