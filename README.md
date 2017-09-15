@@ -17,6 +17,8 @@ The username and password are your reddit credentials
 The user_agent is free text to describe your bot/script 
 
 The posts.txt file is generated automatically on run and contains a list of IDs that are associated to the submissions you have already posted. You should not have to enter any data in this file manually. 
+
+The Patches.log file will be generated on run as well, and is set to a logging level of INFO, for basic logging functionality. The level can be set to DEBUG to get a more detailed view of Patches_Bot at runtime. 
   
 If you would like to add more games to Patches_Bot please contact me and we can move forward with adding those. 
 I would like to have as many games as possible, but I think I will need to refactor to make the program run faster/more efficiently
