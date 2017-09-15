@@ -24,6 +24,7 @@ pubg = reddit.subreddit('pubattlegrounds')
 heroes = reddit.subreddit('heroesofthestorm')
 lol = reddit.subreddit('leagueoflegends')
 wow = reddit.subreddit('wow')
+csgo = reddit.subreddit('csgo') 
 
 def main():
     getFoundPosts() 
@@ -86,6 +87,17 @@ def main():
             else:
                 logging.info("Most recent post for World of Warcraft already found...")
             break
+    #CS:GO
+    logging.info("Finding patch notes for CS:GO")
+    submissions = csgo.submissions(start=submission_interval)
+    for submission in submissions:
+        if ('CS:GO Update: Release Notes for'.lower() in submission.title.lower()
+        and 'blog.counter-strike.net/index.php' in submission.url.lower()):
+            if submission.id not in foundPosts:
+                submit("Counter Strike: Global Offensive", "PC", submission)
+            else:
+                logging.info("Most recent post for CS:GO already found...")
+            break
 
     logging.info("Finished finding patch notes!")
 
@@ -127,6 +139,6 @@ def getFoundPosts():
 main() 
 
 # TODOs: 
-# 1. Find a better system for finding the patch notes outside of title comparison. Too likely to pick up an unintended post 
+# 1. Find a better system for finding the patch notes outside of title comparison. Too likely to pick up an unintended post ----?
 # 2. Cut down duplicate code 
 # 3. Get at least 10 games in catalog 
