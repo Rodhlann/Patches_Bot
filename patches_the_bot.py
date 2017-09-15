@@ -67,14 +67,14 @@ def main():
                 print ("[INFO] Most recent post for LoL - PBE already found...")
             break
     # WoW
-    print "[INFO] Finding patch notes for World of Warcraft..."
+    print ("[INFO] Finding patch notes for World of Warcraft...")
     submissions = wow.submissions(start=submission_interval)
     for submission in submissions:
         if 'Patch Notes - WoW'.lower() in submission.title.lower():
             if submission.id not in foundPosts:
                 submit("World of Warcraft", "PC", submission)
             else:
-                print "[INFO] Most recent post for World of Warcraft already found..."
+                print ("[INFO] Most recent post for World of Warcraft already found...")
             break
 
     print ("[INFO] Finished finding patch notes!")
