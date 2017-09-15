@@ -22,21 +22,46 @@ except Exception as e:
     print(e) 
     sys.exit() 
 
+def formatTitle(game, postTitle, platform):
+    date = str(dt.date.today()).replace('-', '/')
+    return "["+game+"] ("+date+") ("+platform+") " + postTitle
+
+def submit(game, platform, link, name):
+    response = None
+    while(response == None):
+        try:
+            response = reddit.subreddit("test").submit(formatTitle(game, name, platform), url=link)
+        except APIException as e:
+            if e.error_type == 'RATELIMIT':
+                logging.warning(e.message)
+            else:
+                logging.error("[API ERROR] " + e.message)
+                sys.exit()
+            time.sleep(30)
+        except Exception as e:
+            logging.error(e.message)
+            sys.exit()
+    logging.info("Submission for " + game + " done!")
+
+link = ""
+name = ""
+s = ""
+
 #pubg
 url = "http://steamcommunity.com/games/578080/announcements"
-s = ""
 with request.urlopen(url) as page:
     s = page.read()
 soup = BeautifulSoup(s, 'html.parser')
 
-link = ""
-name = ""
+
 posts = soup.find_all("a", class_="large_title")
 for post in posts: 
     if ('Early Access -'.lower() in post.string.lower()
         and 'Update'.lower() in post.string.lower()):
         link = post['href']
         name = post.string
+
+submit("PUBG", "PC", link, name)
 
 #HoTS
 url = "http://us.battle.net/heroes/en/blog/"
@@ -51,26 +76,4 @@ for post in posts:
         link = post['href']
         name = post.string
 
-
-def submit(game, platform, link, name): 
-    response = None 
-    while(response == None): 
-        try: 
-            response = reddit.subreddit("test").submit(formatTitle(game, name, platform), url=link)
-        except APIException as e:
-            if e.error_type == 'RATELIMIT':
-                logging.warning(e.message)
-            else: 
-                logging.error("[API ERROR] " + e.message)
-                sys.exit()
-            time.sleep(30) 
-        except Exception as e: 
-            logging.error(e.message)
-            sys.exit() 
-    logging.info("Submission for " + game + " done!")
-
-def formatTitle(game, postTitle, platform): 
-    date = str(dt.date.today()).replace('-', '/')
-    return "["+game+"] ("+date+") ("+platform+") " + postTitle 
-
-submit("PUBG", "PC", link, name) 
+submit("HOTS", "PC", link, name)
