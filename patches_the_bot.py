@@ -6,12 +6,14 @@ import sys
 import os 
 from praw.exceptions import APIException
 import logging 
+from urllib import request
+from bs4 import BeautifulSoup
 
 logging.basicConfig(filename='Patches.log',level=logging.INFO)
 
-# 1 Month 
-submission_interval = time.mktime((dt.date.today() - dt.timedelta(30)).timetuple())
-foundPosts = []
+# -------- START GLOBALS ----------
+
+savedHrefs = []
 
 try: 
     reddit = praw.Reddit('bot1')
@@ -20,121 +22,143 @@ except Exception as e:
     logging.error(e.message)
     sys.exit() 
 
-pubg = reddit.subreddit('pubattlegrounds')
-heroes = reddit.subreddit('heroesofthestorm')
+# PUBG
+pubg_url = "http://steamcommunity.com/games/578080/announcements"
+pubg_conditions = ['early access -', 'update']
+
+# HotS
+hots_url = "http://us.battle.net/heroes/en/blog/"
+hots_conditions = ['heroes-of-the-storm-patch', 'heroes-of-the-storm-hotfix', 'heroes-of-the-storm-balance']
+
+# LoL
 lol = reddit.subreddit('leagueoflegends')
+
+# WoW
 wow = reddit.subreddit('wow')
+
+# CS:GO
 csgo = reddit.subreddit('csgo') 
 
+# -------- END GLOBALS ----------
+
 def main():
-    getFoundPosts() 
+    getSavedHrefs() 
     logging.info("Initiating search")
 
     # PUBG
     logging.info("Finding patch notes for PUBG...")
-    submissions = pubg.submissions(start=submission_interval)
-    for submission in submissions:
-        if ('Early Access -'.lower() in submission.title.lower() 
-            and 'Update'.lower() in submission.title.lower() 
-            and 'http://steamcommunity.com/games/578080/announcements' in submission.url.lower()):
-            if submission.id not in foundPosts: 
-                submit("PlayerUnknown's Battlegrounds", "PC", submission)
+    soup = makeSoup(pubg_url) 
+    posts = soup.find_all("a", class_="large_title")
+    for post in posts: 
+        href = post['href']
+        name = post.string
+        if(all(string in name.lower() for string in pubg_conditions)):
+            if(href not in savedHrefs):
+                submit("PlayerUnknown's Battlegrounds", "PC", href, name)
             else: 
-                logging.info("Most recent post for PUBG already found...")
-            break    
+                logging.info(name + " already found!")
+
     # HEROES
     logging.info("Finding patch notes for HotS...")
-    submissions = heroes.submissions(start=submission_interval)
-    for submission in submissions:
-        if ('us.battle.net'.lower() in submission.url.lower() 
-            and 'heroes-of-the-storm-patch-notes' in submission.url.lower()):
-            if submission.id not in foundPosts: 
-                submit("Heroes of the Storm", "PC", submission)
+    soup = makeSoup(hots_url) 
+    posts = soup.find_all(class_="news-list__item__title")
+    for post in posts:
+        href = "http://us.battle.net" + post.find('a')['href']
+        name = post.find('a').string.replace('\n', '')
+        if(any(string in href.lower() for string in hots_conditions)):
+            if(href not in savedHrefs): 
+                logging.info("Submitting: " + name)
+                submit("Heroes of the Storm", "PC", href, name) 
             else:
-                logging.info("Most recent post for HotS already found...")
-            break
-    # LoL
-    logging.info("Finding patch notes for LoL...")
-    submissions = lol.submissions(start=submission_interval)
-    for submission in submissions:
-        if ('leagueoflegends.com/en/news/game-updates/patch/'.lower() in submission.url.lower()):
-            if submission.id not in foundPosts: 
-                submit("League of Legends", "PC", submission)
-            else:
-                logging.info("Most recent post for LoL already found...")
-            break
-    # LoL - PBE
-    logging.info("Finding patch notes for LoL - PBE...")
-    submissions = lol.submissions(start=submission_interval)
-    for submission in submissions:
-        if ('surrenderat20'.lower() in submission.url.lower() 
-        and '-pbe-update'.lower() in submission.url.lower()):
-            if submission.id not in foundPosts: 
-                submit("League of Legends - PBE", "PC", submission)
-            else: 
-                logging.info("Most recent post for LoL - PBE already found...")
-            break
-    # WoW
-    logging.info("Finding patch notes for World of Warcraft...")
-    submissions = wow.submissions(start=submission_interval)
-    for submission in submissions:
-        if ('Patch Notes - WoW'.lower() in submission.title.lower() 
-        and 'worldofwarcraft.com' in submission.url.lower() 
-        and 'world-of-warcraft' in submission.url.lower() 
-        and 'patch-notes' in submission.url.lower()):
-            if submission.id not in foundPosts:
-                submit("World of Warcraft", "PC", submission)
-            else:
-                logging.info("Most recent post for World of Warcraft already found...")
-            break
-    #CS:GO
-    logging.info("Finding patch notes for CS:GO")
-    submissions = csgo.submissions(start=submission_interval)
-    for submission in submissions:
-        if ('CS:GO Update: Release Notes for'.lower() in submission.title.lower()
-        and 'blog.counter-strike.net/index.php' in submission.url.lower()):
-            if submission.id not in foundPosts:
-                submit("Counter Strike: Global Offensive", "PC", submission)
-            else:
-                logging.info("Most recent post for CS:GO already found...")
-            break
+                logging.info(name + " already found!")
+    # # LoL
+    # logging.info("Finding patch notes for LoL...")
+    # submissions = lol.submissions(start=submission_interval)
+    # for submission in submissions:
+    #     if ('leagueoflegends.com/en/news/game-updates/patch/'.lower() in submission.url.lower()):
+    #         if submission.id not in foundPosts: 
+    #             submit("League of Legends", "PC", submission)
+    #         else:
+    #             logging.info("Most recent post for LoL already found...")
+    #         break
+    # # LoL - PBE
+    # logging.info("Finding patch notes for LoL - PBE...")
+    # submissions = lol.submissions(start=submission_interval)
+    # for submission in submissions:
+    #     if ('surrenderat20'.lower() in submission.url.lower() 
+    #     and '-pbe-update'.lower() in submission.url.lower()):
+    #         if submission.id not in foundPosts: 
+    #             submit("League of Legends - PBE", "PC", submission)
+    #         else: 
+    #             logging.info("Most recent post for LoL - PBE already found...")
+    #         break
+    # # WoW
+    # logging.info("Finding patch notes for World of Warcraft...")
+    # submissions = wow.submissions(start=submission_interval)
+    # for submission in submissions:
+    #     if ('Patch Notes - WoW'.lower() in submission.title.lower() 
+    #     and 'worldofwarcraft.com' in submission.url.lower() 
+    #     and 'world-of-warcraft' in submission.url.lower() 
+    #     and 'patch-notes' in submission.url.lower()):
+    #         if submission.id not in foundPosts:
+    #             submit("World of Warcraft", "PC", submission)
+    #         else:
+    #             logging.info("Most recent post for World of Warcraft already found...")
+    #         break
+    # #CS:GO
+    # logging.info("Finding patch notes for CS:GO")
+    # submissions = csgo.submissions(start=submission_interval)
+    # for submission in submissions:
+    #     if ('CS:GO Update: Release Notes for'.lower() in submission.title.lower()
+    #     and 'blog.counter-strike.net/index.php' in submission.url.lower()):
+    #         if submission.id not in foundPosts:
+    #             submit("Counter Strike: Global Offensive", "PC", submission)
+    #         else:
+    #             logging.info("Most recent post for CS:GO already found...")
+    #         break
 
     logging.info("Finished finding patch notes!")
 
-def submit(game, platform, submission): 
-    usedIds = open("posts.txt", "a")
-    response = None 
-    while(response == None): 
-        try: 
-            response = reddit.subreddit("patchnotes").submit(formatTitle(game, submission.title, platform), url=submission.url)
-            response.reply("Originally posted by " + submission.author.name + "\n\nPlease message me if something is wrong with this post or you have any suggestions!")
-            usedIds.write(submission.id + '\n')
-            logging.info("Id '"+submission.id+"' logged.")
+def submit(game, platform, link, name):
+    oldHrefs = open("posts.txt", "a")
+    response = None
+    while(response == None):
+        try:
+            response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
+            response.reply("Please message me if something is wrong with this post or you have any suggestions!")
+            oldHrefs.write(link + '\n')
+            logging.info(name + "' logged.")
         except APIException as e:
             if e.error_type == 'RATELIMIT':
                 logging.warning(e.message)
-            else: 
-                logging.error("[API ERROR] " + e.message)
+            else:
+                logging.error(e.message) 
                 sys.exit()
-            time.sleep(30) 
-        except Exception as e: 
+            time.sleep(30)
+        except Exception as e:
             logging.error(e.message)
-            sys.exit() 
-    logging.info("Submission for " + game + " done!")
-    usedIds.close() 
+            sys.exit()
+    logging.info("Submission complete!")
+    oldHrefs.close() 
 
 def formatTitle(game, postTitle, platform): 
     date = str(dt.date.today()).replace('-', '/')
     return "["+game+"] ("+date+") ("+platform+") " + postTitle 
 
-def getFoundPosts():
+def getSavedHrefs():
     if os.path.exists("posts.txt"): 
-        usedIds = open("posts.txt", "r")
-        for id in usedIds:
-            foundPosts.append(id.replace('\n', ''))
+        oldHrefs = open("posts.txt", "r")
+        for id in oldHrefs:
+            savedHrefs.append(id.replace('\n', ''))
     else: 
-        usedIds = open("posts.txt", "w+") 
-    usedIds.close() 
+        oldHrefs = open("posts.txt", "w+") 
+    oldHrefs.close() 
+
+def makeSoup(url): 
+    page_body = ""
+    with request.urlopen(url) as page:
+        page_body = page.read()
+    return BeautifulSoup(page_body, 'html.parser')
 
 main() 
 
