@@ -30,7 +30,9 @@ def main():
     print ("[INFO] Finding patch notes for PUBG...")
     submissions = pubg.submissions(start=submission_interval)
     for submission in submissions:
-        if 'Early Access -'.lower() in submission.title.lower() and 'Update'.lower() in submission.title.lower():
+        if ('Early Access -'.lower() in submission.title.lower() 
+            and 'Update'.lower() in submission.title.lower() 
+            and 'http://steamcommunity.com/games/578080/announcements' in submission.url.lower()):
             if submission.id not in foundPosts: 
                 submit("PlayerUnknown's Battlegrounds", "PC", submission)
             else: 
@@ -40,7 +42,8 @@ def main():
     print ("[INFO] Finding patch notes for HotS...")
     submissions = heroes.submissions(start=submission_interval)
     for submission in submissions:
-        if 'Heroes of the Storm Patch Notes'.lower() in submission.title.lower():
+        if ('us.battle.net'.lower() in submission.url.lower() 
+            and 'heroes-of-the-storm-patch-notes' in submission.url.lower()):
             if submission.id not in foundPosts: 
                 submit("Heroes of the Storm", "PC", submission)
             else:
@@ -50,7 +53,7 @@ def main():
     print ("[INFO] Finding patch notes for LoL...")
     submissions = lol.submissions(start=submission_interval)
     for submission in submissions:
-        if 'http://euw.leagueoflegends.com/en/news/game-updates/patch/'.lower() in submission.url.lower():
+        if ('leagueoflegends.com/en/news/game-updates/patch/'.lower() in submission.url.lower()):
             if submission.id not in foundPosts: 
                 submit("League of Legends", "PC", submission)
             else:
@@ -60,7 +63,8 @@ def main():
     print ("[INFO] Finding patch notes for LoL - PBE...")
     submissions = lol.submissions(start=submission_interval)
     for submission in submissions:
-        if 'PBE Update'.lower() in submission.title.lower():
+        if ('surrenderat20'.lower() in submission.url.lower() 
+        and '-pbe-update'.lower() in submission.url.lower()):
             if submission.id not in foundPosts: 
                 submit("League of Legends - PBE", "PC", submission)
             else: 
@@ -70,7 +74,10 @@ def main():
     print ("[INFO] Finding patch notes for World of Warcraft...")
     submissions = wow.submissions(start=submission_interval)
     for submission in submissions:
-        if 'Patch Notes - WoW'.lower() in submission.title.lower():
+        if ('Patch Notes - WoW'.lower() in submission.title.lower() 
+        and 'worldofwarcraft.com' in submission.url.lower() 
+        and 'world-of-warcraft' in submission.url.lower() 
+        and 'patch-notes' in submission.url.lower()):
             if submission.id not in foundPosts:
                 submit("World of Warcraft", "PC", submission)
             else:
