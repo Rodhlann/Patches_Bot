@@ -22,6 +22,7 @@ except Exception as e:
     print(e) 
     sys.exit() 
 
+#pubg
 url = "http://steamcommunity.com/games/578080/announcements"
 s = ""
 with request.urlopen(url) as page:
@@ -36,6 +37,20 @@ for post in posts:
         and 'Update'.lower() in post.string.lower()):
         link = post['href']
         name = post.string
+
+#HoTS
+url = "http://us.battle.net/heroes/en/blog/"
+with request.urlopen(url) as page:
+    s = page.read()
+soup = BeautifulSoup(s, 'html.parser')
+
+
+posts = soup.find_all("a")
+for post in posts:
+    if(any(url in ('heroes-of-the-storm-patch', 'heroes-of-the-storm-hotfix', 'heroes-of-the-storm-balance')) for url in post.string.lower()):
+        link = post['href']
+        name = post.string
+
 
 def submit(game, platform, link, name): 
     response = None 
