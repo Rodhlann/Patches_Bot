@@ -53,15 +53,13 @@ with request.urlopen(url) as page:
     s = page.read()
 soup = BeautifulSoup(s, 'html.parser')
 
+# posts = soup.find_all("a", class_="large_title")
+# for post in posts: 
+#     if (all(title in ('early access -', 'update')) for title in post.string.lower()):
+#         link = post['href']
+#         name = post.string
 
-posts = soup.find_all("a", class_="large_title")
-for post in posts: 
-    if ('Early Access -'.lower() in post.string.lower()
-        and 'Update'.lower() in post.string.lower()):
-        link = post['href']
-        name = post.string
-
-submit("PUBG", "PC", link, name)
+# submit("PUBG", "PC", link, name)
 
 #HoTS
 url = "http://us.battle.net/heroes/en/blog/"
@@ -69,11 +67,12 @@ with request.urlopen(url) as page:
     s = page.read()
 soup = BeautifulSoup(s, 'html.parser')
 
-
-posts = soup.find_all("a")
+posts = soup.find_all(class_="news-list__item__title")
+hots_conditions = ['heroes-of-the-storm-patch', 'heroes-of-the-storm-hotfix', 'heroes-of-the-storm-balance']
 for post in posts:
-    if(any(url in ('heroes-of-the-storm-patch', 'heroes-of-the-storm-hotfix', 'heroes-of-the-storm-balance')) for url in post.string.lower()):
-        link = post['href']
-        name = post.string
+    href = post.find('a')['href']
+    name = post.find('a').string.replace('\n', '')
+    if(any(string in href.lower() for string in hots_conditions)):
+        print(name + " : " + href)
 
-submit("HOTS", "PC", link, name)
+# submit("HOTS", "PC", link, name)
