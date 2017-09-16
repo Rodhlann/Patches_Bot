@@ -2,9 +2,9 @@
 Reddit Patch Notes Bot
 
 In order to run this code you will need to install the following libraries until I setup a setup.py: 
-PRAW (pip3 install praw --user) 
-BeautifulSoup4 (pip3 install beautifulsoup4 --user) 
-Pyrebase (pip3 install pyrebase --user) 
+ - PRAW (pip3 install praw --user) 
+ - BeautifulSoup4 (pip3 install beautifulsoup4 --user) 
+ - Pyrebase (pip3 install pyrebase --user) 
 
 You will also need to create file called praw.ini with this content: 
 ```
