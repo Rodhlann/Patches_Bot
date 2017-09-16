@@ -2,5 +2,6 @@ getPost.py
 posts.txt
 praw.ini
 Patches.log
-.vscode/
 beautifulsoup.py
+__pycache__/
+.vscode/

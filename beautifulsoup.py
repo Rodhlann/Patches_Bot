@@ -8,6 +8,7 @@ import sys
 import os 
 from praw.exceptions import APIException
 import logging 
+import game_data
 
 logging.basicConfig(filename='Patches.log',level=logging.INFO)
 
