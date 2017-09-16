@@ -20,12 +20,11 @@ The client_id and client_secret are given to you when you create an app on your 
 The username and password are your reddit credentials
 The user_agent is free text to describe your bot/script 
 
-
-There is also a config file that I will need to distribute on a case by case basis, if you are interested in 
-contributing. 
-
-All of the previously submitted posts are now saved to firebase so that we are not posting duplicate patch notes. 
+All previously submitted posts are now saved to firebase so that we are not posting duplicate patch notes. 
   
 If you would like to add more games to Patches_Bot, or contribute in any other way, please contact me and we can move forward with that process.  
+
+If you would like to contribute there is a config file that I will need to distribute on a case by case basis, if you are interested in 
+working on the bot. 
 
 Thanks for taking a look! 
