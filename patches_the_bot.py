@@ -31,18 +31,24 @@ hots_url = "http://us.battle.net/heroes/en/blog/"
 hots_conditions = ['heroes-of-the-storm-patch', 'heroes-of-the-storm-hotfix', 'heroes-of-the-storm-balance']
 
 # LoL
-lol = reddit.subreddit('leagueoflegends')
+lol_url = "http://eune.leagueoflegends.com/en/news/game-updates"
+lol_conditions = ['/game-updates/patch/patch-']
+lol_pbe_url="http://www.surrenderat20.net/search/label/PBE/"
+lol_pbe_conditions = ['-pbe-update']
 
 # WoW
-wow = reddit.subreddit('wow')
+wow_url = "https://worldofwarcraft.com/en-gb/news/"
+wow_conditions = ['patch-notes', 'hotfixes']
 
 # CS:GO
-csgo = reddit.subreddit('csgo') 
+csgo_url = "http://blog.counter-strike.net/index.php/category/updates/"
+csgo_conditions = ['release notes for'] 
 
 # -------- END GLOBALS ----------
 
 def main():
     getSavedHrefs() 
+    logging.info("-------------------"+str(dt.datetime.today())+"-------------------") 
     logging.info("Initiating search")
 
     # PUBG
@@ -57,7 +63,6 @@ def main():
                 submit("PlayerUnknown's Battlegrounds", "PC", href, name)
             else: 
                 logging.info(name + " already found!")
-
     # HEROES
     logging.info("Finding patch notes for HotS...")
     soup = makeSoup(hots_url) 
@@ -71,51 +76,58 @@ def main():
                 submit("Heroes of the Storm", "PC", href, name) 
             else:
                 logging.info(name + " already found!")
-    # # LoL
-    # logging.info("Finding patch notes for LoL...")
-    # submissions = lol.submissions(start=submission_interval)
-    # for submission in submissions:
-    #     if ('leagueoflegends.com/en/news/game-updates/patch/'.lower() in submission.url.lower()):
-    #         if submission.id not in foundPosts: 
-    #             submit("League of Legends", "PC", submission)
-    #         else:
-    #             logging.info("Most recent post for LoL already found...")
-    #         break
+    # LoL
+    logging.info("Finding patch notes for LoL...")
+    soup = makeSoup(lol_url) 
+    posts = soup.find_all("h4")
+    for post in posts:
+        href = "http://eune.leagueoflegends.com/" + post.find('a')['href']
+        name = post.find('a').string.replace('\n', '')
+        if(any(string in href.lower() for string in lol_conditions)):
+            if(href not in savedHrefs): 
+                logging.info("Submitting: " + name)
+                submit("League of Legends", "PC", href, name) 
+            else:
+                logging.info(name + " already found!")
     # # LoL - PBE
     # logging.info("Finding patch notes for LoL - PBE...")
-    # submissions = lol.submissions(start=submission_interval)
-    # for submission in submissions:
-    #     if ('surrenderat20'.lower() in submission.url.lower() 
-    #     and '-pbe-update'.lower() in submission.url.lower()):
-    #         if submission.id not in foundPosts: 
-    #             submit("League of Legends - PBE", "PC", submission)
-    #         else: 
-    #             logging.info("Most recent post for LoL - PBE already found...")
-    #         break
+    # soup = makeSoup(lol_pbe_url) 
+    # posts = soup.find_all("h1", class_="news-title")
+    # for post in posts:
+    #     href = post.find('a')['href']
+    #     name = post.find('a').string.replace('\n', '')
+    #     if(any(string in href.lower() for string in lol_pbe_conditions)):
+    #         if(href not in savedHrefs): 
+    #             logging.info("Submitting: " + name)
+    #             submit("League of Legends - PBE", "PC", href, name) 
+    #         else:
+    #             logging.info(name + " already found!")
     # # WoW
-    # logging.info("Finding patch notes for World of Warcraft...")
-    # submissions = wow.submissions(start=submission_interval)
-    # for submission in submissions:
-    #     if ('Patch Notes - WoW'.lower() in submission.title.lower() 
-    #     and 'worldofwarcraft.com' in submission.url.lower() 
-    #     and 'world-of-warcraft' in submission.url.lower() 
-    #     and 'patch-notes' in submission.url.lower()):
-    #         if submission.id not in foundPosts:
-    #             submit("World of Warcraft", "PC", submission)
-    #         else:
-    #             logging.info("Most recent post for World of Warcraft already found...")
-    #         break
-    # #CS:GO
-    # logging.info("Finding patch notes for CS:GO")
-    # submissions = csgo.submissions(start=submission_interval)
-    # for submission in submissions:
-    #     if ('CS:GO Update: Release Notes for'.lower() in submission.title.lower()
-    #     and 'blog.counter-strike.net/index.php' in submission.url.lower()):
-    #         if submission.id not in foundPosts:
-    #             submit("Counter Strike: Global Offensive", "PC", submission)
-    #         else:
-    #             logging.info("Most recent post for CS:GO already found...")
-    #         break
+    logging.info("Finding patch notes for WoW...")
+    soup = makeSoup(wow_url) 
+    posts = soup.find_all("div", class_="NewsBlog-content")
+    for post in posts:
+        href = "https://worldofwarcraft.com/en-gb/news" + post.find('a')['href']
+        name = post.find(class_="NewsBlog-title").string.replace('\n', '')
+        if(any(string in href.lower() for string in wow_conditions)):
+            if(href not in savedHrefs): 
+                logging.info("Submitting: " + name)
+                submit("World of Warcraft", "PC", href, name) 
+            else:
+                logging.info(name + " already found!")
+    #CS:GO
+    logging.info("Finding patch notes for CS:GO")
+    soup = makeSoup(csgo_url) 
+    posts = soup.find_all("div", class_="inner_post")
+    for post in posts:
+        href = post.find('h2').find('a')['href']
+        name = post.find('h2').find('a').string.replace('\n', '')
+        if(any(string in name.lower() for string in csgo_conditions)):
+            if(href not in savedHrefs): 
+                logging.info("Submitting: " + name)
+                submit("Counter Strike: Global Offensive", "PC", href, name) 
+            else:
+                logging.info(name + " already found!")
 
     logging.info("Finished finding patch notes!")
 
@@ -156,7 +168,9 @@ def getSavedHrefs():
 
 def makeSoup(url): 
     page_body = ""
-    with request.urlopen(url) as page:
+    # NOTE: User agent prevents sites from blocking the bot 
+    req = request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with request.urlopen(req) as page:
         page_body = page.read()
     return BeautifulSoup(page_body, 'html.parser')
 
