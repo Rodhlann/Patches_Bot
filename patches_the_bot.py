@@ -55,7 +55,7 @@ def main():
     soup = patches.makeSoup(gd.wow_url) 
     posts = soup.find_all("div", class_="NewsBlog-content")
     for post in posts:
-        href = "https://worldofwarcraft.com/en-gb/news" + post.find('a')['href']
+        href = "https://worldofwarcraft.com" + post.find('a')['href']
         name = post.find(class_="NewsBlog-title").string.replace('\n', '')
         if(any(string in href.lower() for string in gd.wow_conditions)):
             if(href not in savedHrefs): 

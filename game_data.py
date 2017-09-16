@@ -13,7 +13,7 @@ lol_pbe_url="http://www.surrenderat20.net/search/label/PBE/"
 lol_pbe_conditions = ['-pbe-update']
 
 # WoW
-wow_url = "https://worldofwarcraft.com/en-gb/news/"
+wow_url = "https://worldofwarcraft.com/en-us/news/"
 wow_conditions = ['patch-notes', 'hotfixes']
 
 # CS:GO
