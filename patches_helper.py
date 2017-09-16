@@ -1,13 +1,14 @@
-import praw
 import time
 import datetime as dt
-import json
-import sys 
-import os 
+import sys
+import os
+import logging
+from urllib import request, error
+import praw
 from praw.exceptions import APIException
-import logging 
-from urllib import request
 from bs4 import BeautifulSoup
+import pyrebase
+import config
 
 # -------- START GLOBALS ----------
 
@@ -20,26 +21,39 @@ except Exception as e:
     logging.error(e.message)
     sys.exit() 
 
+try: 
+    logging.info("Connecting to database...")
+    firebase = pyrebase.initialize_app(config.dbconfig)
+    auth = firebase.auth() 
+    user = auth.sign_in_with_email_and_password(config.email, config.password)
+    db = firebase.database() 
+    logging.info("Database connection established...")
+except error.HTTPError as e: 
+    logging.error("Database connection error!") 
+    sys.exit() 
+
 # -------- END GLOBALS ----------
 
 def submit(game, platform, link, name):
     oldHrefs = open("posts.txt", "a")
     response = None
-    while(response == None):
+    while response == None:
         try:
-            response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
-            response.reply("Please message me if something is wrong with this post or you have any suggestions!")
+            # response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
+            # response.reply("Please message me if something is wrong with this post or you have any suggestions!")
             oldHrefs.write(link + '\n')
+            postToDB(user, link)
             logging.info(name + "' logged.")
+            response = "TEST"
         except APIException as e:
             if e.error_type == 'RATELIMIT':
                 logging.warning(e.message)
             else:
-                logging.error(e.message) 
+                logging.error(e) 
                 sys.exit()
             time.sleep(30)
         except Exception as e:
-            logging.error(e.message)
+            logging.error(e)
             sys.exit()
     logging.info("Submission complete!")
     oldHrefs.close() 
@@ -48,16 +62,6 @@ def formatTitle(game, postTitle, platform):
     date = str(dt.date.today()).replace('-', '/')
     return "["+game+"] ("+date+") ("+platform+") " + postTitle 
 
-def getSavedHrefs():
-    if os.path.exists("posts.txt"): 
-        oldHrefs = open("posts.txt", "r")
-        for id in oldHrefs:
-            savedHrefs.append(id.replace('\n', ''))
-    else: 
-        oldHrefs = open("posts.txt", "w+")  
-    oldHrefs.close() 
-    return savedHrefs
-
 def makeSoup(url): 
     page_body = ""
     # NOTE: User agent prevents sites from blocking the bot 
@@ -65,3 +69,32 @@ def makeSoup(url):
     with request.urlopen(req) as page:
         page_body = page.read()
     return BeautifulSoup(page_body, 'html.parser')
+
+def postToDB(user, data):
+    logging.info("Posting " + data + " to database...")
+    try: 
+        user = auth.refresh(user['refreshToken'])
+        db.child("links").push({"link": data}, user['idToken'])
+    except Exception: 
+        logging.error("Database post error!") 
+        sys.exit() 
+    logging.info("Database post successful!") 
+
+def getPostsFromDB(user): 
+    logging.info("Getting link data from database...")
+    try: 
+        user = auth.refresh(user['refreshToken'])
+        data = db.child("links").get()
+        for link in data.each():
+            savedHrefs.append(link.item[1]['link'])
+    except Exception: 
+        logging.error("Database retrieval error!")
+        sys.exit() 
+    logging.info("Database retrieval successful!") 
+
+def getSavedHrefs():
+    # Method used to get USER variable, which is not available to getPostsFromDB
+    # TODO: Figure out why USER variable isn't avaialble to getPostsFromDB
+    getPostsFromDB(user) 
+    return savedHrefs
+    

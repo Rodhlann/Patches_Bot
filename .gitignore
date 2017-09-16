@@ -2,6 +2,7 @@ getPost.py
 posts.txt
 praw.ini
 Patches.log
-beautifulsoup.py
+serviceAccount.json
+config.py
 __pycache__/
 .vscode/

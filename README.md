@@ -1,7 +1,10 @@
 # Patches_Bot
 Reddit Patch Notes Bot
 
-In order to run this code you will need to install PRAW (pip install praw --user) 
+In order to run this code you will need to install the following libraries until I setup a setup.py: 
+PRAW (pip3 install praw --user) 
+BeautifulSoup4 (pip3 install beautifulsoup4 --user) 
+Pyrebase (pip3 install pyrebase --user) 
 
 You will also need to create file called praw.ini with this content: 
 ```
@@ -12,6 +15,8 @@ password=
 username=
 user_agent=
 ```
+
+As well as a 
 The client_id and client_secret are given to you when you create an app on your reddit.com profile. 
 The username and password are your reddit credentials
 The user_agent is free text to describe your bot/script 

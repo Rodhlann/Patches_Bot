@@ -1,19 +1,15 @@
 import datetime as dt
-import logging 
 import game_data as gd 
 import patches_helper as patches
+import logging
 
+logging.getLogger('').handlers = []
 logging.basicConfig(filename='Patches.log',level=logging.INFO)
 
-# -------- START GLOBALS ----------
-
-savedHrefs = []
-
-# -------- END GLOBALS ----------
-
 def main():
+
     savedHrefs = patches.getSavedHrefs() 
-    logging.info("-------------------"+str(dt.datetime.today())+"-------------------") 
+
     logging.info("Initiating search")
 
     # PUBG
@@ -54,20 +50,7 @@ def main():
                 patches.submit("League of Legends", "PC", href, name) 
             else:
                 logging.info(name + " already found!")
-    # # LoL - PBE
-    # logging.info("Finding patch notes for LoL - PBE...")
-    # soup = makeSoup(lol_pbe_url) 
-    # posts = soup.find_all("h1", class_="news-title")
-    # for post in posts:
-    #     href = post.find('a')['href']
-    #     name = post.find('a').string.replace('\n', '')
-    #     if(any(string in href.lower() for string in lol_pbe_conditions)):
-    #         if(href not in savedHrefs): 
-    #             logging.info("Submitting: " + name)
-    #             submit("League of Legends - PBE", "PC", href, name) 
-    #         else:
-    #             logging.info(name + " already found!")
-    # # WoW
+    # WoW
     logging.info("Finding patch notes for WoW...")
     soup = patches.makeSoup(gd.wow_url) 
     posts = soup.find_all("div", class_="NewsBlog-content")
@@ -80,7 +63,7 @@ def main():
                 patches.submit("World of Warcraft", "PC", href, name) 
             else:
                 logging.info(name + " already found!")
-    #CS:GO
+    # CS:GO
     logging.info("Finding patch notes for CS:GO")
     soup = patches.makeSoup(gd.csgo_url) 
     posts = soup.find_all("div", class_="inner_post")
@@ -96,6 +79,7 @@ def main():
 
     logging.info("Finished finding patch notes!")
 
+logging.info("-------------------"+str(dt.datetime.today())+"-------------------") 
 main() 
 
 # TODOs: 
