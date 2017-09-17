@@ -1,4 +1,6 @@
-getPost.py
-posts.txt
 praw.ini
 Patches.log
+serviceAccount.json
+config.py
+__pycache__/
+.vscode/

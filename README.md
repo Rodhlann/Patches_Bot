@@ -1,7 +1,10 @@
 # Patches_Bot
 Reddit Patch Notes Bot
 
-In order to run this code you will need to install PRAW (pip install praw --user) 
+In order to run this code you will need to install the following libraries until I setup a setup.py: 
+ - PRAW (pip3 install praw --user) 
+ - BeautifulSoup4 (pip3 install beautifulsoup4 --user) 
+ - Pyrebase (pip3 install pyrebase --user) 
 
 You will also need to create file called praw.ini with this content: 
 ```
@@ -12,19 +15,16 @@ password=
 username=
 user_agent=
 ```
+
 The client_id and client_secret are given to you when you create an app on your reddit.com profile. 
 The username and password are your reddit credentials
 The user_agent is free text to describe your bot/script 
 
-The posts.txt file is generated automatically on run and contains a list of IDs that are associated to the submissions you have already posted. You should not have to enter any data in this file manually. 
-
-The Patches.log file will be generated on run as well, and is set to a logging level of INFO, for basic logging functionality. The level can be set to DEBUG to get a more detailed view of Patches_Bot at runtime. 
+All previously submitted posts are now saved to firebase so that we are not posting duplicate patch notes. 
   
-If you would like to add more games to Patches_Bot please contact me and we can move forward with adding those. 
-I would like to have as many games as possible, but I think I will need to refactor to make the program run faster/more efficiently
-if it gets too big. 
+If you would like to add more games to Patches_Bot, or contribute in any other way, please contact me and we can move forward with that process.  
 
-I would also like to eventually create an account for this bot, as I am currently just using my personal account for now. This change might 
-make it easier to collaborate in the future. 
+If you would like to contribute there is a config file that I will need to distribute on a case by case basis, if you are interested in 
+working on the bot. 
 
 Thanks for taking a look! 
