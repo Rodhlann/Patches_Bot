@@ -63,6 +63,19 @@ def main():
                 patches.submit("World of Warcraft", "PC", href, name) 
             else:
                 logging.info(name + " already found!")
+    # Hearthstone 
+    logging.info("Finding patch notes for Hearthstone...")
+    soup = patches.makeSoup(gd.hearthstone_url) 
+    posts = soup.find_all("h3", class_="article-title")
+    for post in posts:
+        href = "https://us.battle.net" + post.find('a')['href']
+        name = post.find('a').string.replace('\n', '')
+        if(any(string in href.lower() for string in gd.hearthstone_conditions)):
+            if(href not in savedHrefs): 
+                logging.info("Submitting: " + name)
+                patches.submit("Hearthstone", "PC", href, name) 
+            else:
+                logging.info(name + " already found!")
     # CS:GO
     logging.info("Finding patch notes for CS:GO")
     soup = patches.makeSoup(gd.csgo_url) 

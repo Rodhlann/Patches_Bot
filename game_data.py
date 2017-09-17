@@ -16,6 +16,10 @@ lol_pbe_conditions = ['-pbe-update']
 wow_url = "https://worldofwarcraft.com/en-us/news/"
 wow_conditions = ['patch-notes', 'hotfixes']
 
+# Hearthstone
+hearthstone_url = "https://us.battle.net/hearthstone/en/blog/"
+hearthstone_conditions = ['hearthstone-update-']
+
 # CS:GO
 csgo_url = "http://blog.counter-strike.net/index.php/category/updates/"
 csgo_conditions = ['release notes for'] 
