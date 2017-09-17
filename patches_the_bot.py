@@ -42,7 +42,7 @@ def main():
     soup = patches.makeSoup(gd.lol_url) 
     posts = soup.find_all("h4")
     for post in posts:
-        href = "http://eune.leagueoflegends.com/" + post.find('a')['href']
+        href = "http://eune.leagueoflegends.com" + post.find('a')['href']
         name = post.find('a').string.replace('\n', '')
         if(any(string in href.lower() for string in gd.lol_conditions)):
             if(href not in savedHrefs): 

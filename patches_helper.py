@@ -35,16 +35,13 @@ except error.HTTPError as e:
 # -------- END GLOBALS ----------
 
 def submit(game, platform, link, name):
-    oldHrefs = open("posts.txt", "a")
     response = None
     while response == None:
         try:
             response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
             response.reply("Please message me if something is wrong with this post or you have any suggestions!")
-            oldHrefs.write(link + '\n')
             postToDB(user, link)
             logging.info(name + "' logged.")
-            response = "TEST"
         except APIException as e:
             if e.error_type == 'RATELIMIT':
                 logging.warning(e.message)
@@ -56,7 +53,6 @@ def submit(game, platform, link, name):
             logging.error(e)
             sys.exit()
     logging.info("Submission complete!")
-    oldHrefs.close() 
 
 def formatTitle(game, postTitle, platform): 
     date = str(dt.date.today()).replace('-', '/')
