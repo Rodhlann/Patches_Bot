@@ -26,4 +26,4 @@ def send(message):
             from_=config.sms_from,
             body=message)
     except Exception as e: 
-        logging.error(e)
+        logging.error("SMS error:\n" + e)

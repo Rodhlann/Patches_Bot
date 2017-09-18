@@ -13,7 +13,7 @@ def alert_email(error):
     body = 'Hey!\n\n I have failed!!!\n\n-----------------------------\n\n'
     footer = "\n\n-----------------------------\n\n\n<3,\n\n Patches_the_Bot\n"
     message = body + error + footer 
-    send(message)
+    send(subject, message)
 
 def success_email(logged_events): 
     subject = '[INFO] Success'  
@@ -26,9 +26,9 @@ def success_email(logged_events):
     else: 
         info = "No new posts."
     message = body + info + footer 
-    send(message) 
+    send(subject, message) 
     
-def send(message): 
+def send(subject, message): 
     try:  
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
@@ -41,4 +41,4 @@ def send(message):
         server.sendmail(sent_from, to, msg.as_string())
         server.close()
     except Exception as e:
-        logging.error(e)
+        logging.error("Email error:\n" + e)
