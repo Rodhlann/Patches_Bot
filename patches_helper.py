@@ -9,6 +9,7 @@ from praw.exceptions import APIException
 from bs4 import BeautifulSoup
 import pyrebase
 import config
+import email_handler as email
 
 # -------- START GLOBALS ----------
 
@@ -18,7 +19,8 @@ try:
     reddit = praw.Reddit('bot1')
     reddit.user.me()
 except Exception as e:
-    logging.error(e.message)
+    logging.error(e)
+    email.alert_email("(patches_helper.init - connecting to Reddit)\n\n" + str(e)) 
     sys.exit() 
 
 try: 
@@ -28,8 +30,9 @@ try:
     user = auth.sign_in_with_email_and_password(config.email, config.password)
     db = firebase.database() 
     logging.info("Database connection established...")
-except error.HTTPError as e: 
-    logging.error("Database connection error!") 
+except Exception as e: 
+    logging.error(e) 
+    email.alert_email("(patches_helper.init - connecting to DB)\n\n" + str(e)) 
     sys.exit() 
 
 # -------- END GLOBALS ----------
@@ -42,16 +45,15 @@ def submit(game, platform, link, name):
             response.reply("Please message me if something is wrong with this post or you have any suggestions!")
             postToDB(user, link)
             logging.info(name + "' logged.")
-        except APIException as e:
+            response = "Safeguard"
+        except Exception as e:
             if e.error_type == 'RATELIMIT':
                 logging.warning(e.message)
             else:
-                logging.error(e) 
-                sys.exit()
+                logging.error(e)
+                email.alert_email("(patches_helper.submit)\n\n" + str(e)) 
+                sys.exit() 
             time.sleep(30)
-        except Exception as e:
-            logging.error(e)
-            sys.exit()
     logging.info("Submission complete!")
 
 def formatTitle(game, postTitle, platform): 
@@ -71,8 +73,9 @@ def postToDB(user, data):
     try: 
         user = auth.refresh(user['refreshToken'])
         db.child("links").push({"link": data}, user['idToken'])
-    except Exception: 
-        logging.error("Database post error!") 
+    except Exception as e:
+        logging.error(e)
+        email.alert_email("(patches_helper.postToDB)\n\n" + str(e)) 
         sys.exit() 
     logging.info("Database post successful!") 
 
@@ -83,8 +86,9 @@ def getPostsFromDB(user):
         data = db.child("links").get()
         for link in data.each():
             savedHrefs.append(link.item[1]['link'])
-    except Exception: 
-        logging.error("Database retrieval error!")
+    except Exception as e:
+        logging.error(e)
+        email.alert_email("(patches_helper.getPostsFromDB)\n\n" + str(e)) 
         sys.exit() 
     logging.info("Database retrieval successful!") 
 

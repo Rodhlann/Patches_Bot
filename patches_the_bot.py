@@ -1,6 +1,7 @@
 import datetime as dt
 import game_data as gd 
 import patches_helper as patches
+import email_handler as email 
 import logging
 
 logging.getLogger('').handlers = []
@@ -9,6 +10,7 @@ logging.basicConfig(filename='Patches.log',level=logging.INFO)
 def main():
 
     savedHrefs = patches.getSavedHrefs() 
+    logged_events = []
 
     logging.info("Initiating search")
 
@@ -21,7 +23,9 @@ def main():
         name = post.string
         if(all(string in name.lower() for string in gd.pubg_conditions)):
             if(href not in savedHrefs):
+                logging.info("Submitting: " + name)
                 patches.submit("PlayerUnknown's Battlegrounds", "PC", href, name)
+                logged_events.append(name + " : " + href)   
             else: 
                 logging.info(name + " already found!")
     # HEROES
@@ -35,6 +39,7 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Heroes of the Storm", "PC", href, name) 
+                logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
     # LoL
@@ -48,6 +53,7 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("League of Legends", "PC", href, name) 
+                logged_events.append(name + " : " + href)  
             else:
                 logging.info(name + " already found!")
     # WoW
@@ -61,6 +67,7 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("World of Warcraft", "PC", href, name) 
+                logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
     # Hearthstone 
@@ -74,6 +81,7 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Hearthstone", "PC", href, name) 
+                logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
     # CS:GO
@@ -87,10 +95,12 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Counter Strike: Global Offensive", "PC", href, name) 
+                logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
 
     logging.info("Finished finding patch notes!")
+    email.success_email(logged_events) 
 
 logging.info("-------------------"+str(dt.datetime.today())+"-------------------") 
 main() 
