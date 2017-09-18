@@ -1,6 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 import config
+import logging
 
 sent_from = config.gmail_email
 gmail_password = config.gmail_pass
@@ -12,20 +13,7 @@ def alert_email(error):
     body = 'Hey!\n\n I have failed!!!\n\n-----------------------------\n\n'
     footer = "\n\n-----------------------------\n\n\n<3,\n\n Patches_the_Bot\n"
     message = body + error + footer 
-    
-    try:  
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.ehlo()
-        server.login(sent_from, gmail_password)
-
-        msg = MIMEText(message, text_subtype)
-        msg['Subject'] = subject
-        msg['From']   = sent_from
-
-        server.sendmail(sent_from, to, msg.as_string())
-        server.close()
-    except Exception as e:
-        sys.exit( "mail failed; %s" % str(e) )
+    send(message)
 
 def success_email(logged_events): 
     subject = '[INFO] Success'  
@@ -38,7 +26,9 @@ def success_email(logged_events):
     else: 
         info = "No new posts."
     message = body + info + footer 
+    send(message) 
     
+def send(message): 
     try:  
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
@@ -51,4 +41,4 @@ def success_email(logged_events):
         server.sendmail(sent_from, to, msg.as_string())
         server.close()
     except Exception as e:
-        sys.exit( "mail failed; %s" % str(e) )
+        logging.error(e)

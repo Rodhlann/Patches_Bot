@@ -2,6 +2,7 @@ import datetime as dt
 import game_data as gd 
 import patches_helper as patches
 import email_handler as email 
+import sms_handler as sms
 import logging
 
 logging.getLogger('').handlers = []
@@ -25,7 +26,8 @@ def main():
             if(href not in savedHrefs):
                 logging.info("Submitting: " + name)
                 patches.submit("PlayerUnknown's Battlegrounds", "PC", href, name)
-                logged_events.append(name + " : " + href)   
+                savedHrefs.append(href) 
+                logged_events.append(name + " : " + href) 
             else: 
                 logging.info(name + " already found!")
     # HEROES
@@ -39,6 +41,7 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Heroes of the Storm", "PC", href, name) 
+                savedHrefs.append(href) 
                 logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
@@ -53,6 +56,7 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("League of Legends", "PC", href, name) 
+                savedHrefs.append(href) 
                 logged_events.append(name + " : " + href)  
             else:
                 logging.info(name + " already found!")
@@ -67,6 +71,7 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("World of Warcraft", "PC", href, name) 
+                savedHrefs.append(href) 
                 logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
@@ -81,6 +86,7 @@ def main():
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Hearthstone", "PC", href, name) 
+                savedHrefs.append(href) 
                 logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
@@ -91,16 +97,33 @@ def main():
     for post in posts:
         href = post.find('h2').find('a')['href']
         name = post.find('h2').find('a').string.replace('\n', '')
-        if(any(string in name.lower() for string in gd.csgo_conditions)):
+        if(all(string in name.lower() for string in gd.csgo_conditions)):
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Counter Strike: Global Offensive", "PC", href, name) 
+                savedHrefs.append(href) 
+                logged_events.append(name + " : " + href)   
+            else:
+                logging.info(name + " already found!")
+    # DOTA2 
+    logging.info("Finding patch notes for DOTA2")
+    soup = patches.makeSoup(gd.dota2_url) 
+    posts = soup.find_all("h2", class_="entry-title")
+    for post in posts:
+        href = post.find('a')['href']
+        name = post.find('a').string.replace('\n', '')
+        if(all(string in name.lower() for string in gd.dota2_conditions)):
+            if(href not in savedHrefs): 
+                logging.info("Submitting: " + name)
+                patches.submit("DOTA 2", "PC", href, name) 
+                savedHrefs.append(href) 
                 logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
 
     logging.info("Finished finding patch notes!")
     email.success_email(logged_events) 
+    sms.success_sms(logged_events)
 
 logging.info("-------------------"+str(dt.datetime.today())+"-------------------") 
 main() 

@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import pyrebase
 import config
 import email_handler as email
+import sms_handler as sms
 
 # -------- START GLOBALS ----------
 
@@ -21,6 +22,7 @@ try:
 except Exception as e:
     logging.error(e)
     email.alert_email("(patches_helper.init - connecting to Reddit)\n\n" + str(e)) 
+    sms.alert_sms("(patches_helper.init - connecting to Reddit)")
     sys.exit() 
 
 try: 
@@ -33,6 +35,7 @@ try:
 except Exception as e: 
     logging.error(e) 
     email.alert_email("(patches_helper.init - connecting to DB)\n\n" + str(e)) 
+    sms.alert_sms("(patches_helper.init - connecting to DB)")
     sys.exit() 
 
 # -------- END GLOBALS ----------
@@ -52,6 +55,7 @@ def submit(game, platform, link, name):
             else:
                 logging.error(e)
                 email.alert_email("(patches_helper.submit)\n\n" + str(e)) 
+                sms.alert_sms("(patches_helper.submit)")
                 sys.exit() 
             time.sleep(30)
     logging.info("Submission complete!")
@@ -76,6 +80,7 @@ def postToDB(user, data):
     except Exception as e:
         logging.error(e)
         email.alert_email("(patches_helper.postToDB)\n\n" + str(e)) 
+        sms.alert_sms("(patches_helper.postToDB)")
         sys.exit() 
     logging.info("Database post successful!") 
 
@@ -89,6 +94,7 @@ def getPostsFromDB(user):
     except Exception as e:
         logging.error(e)
         email.alert_email("(patches_helper.getPostsFromDB)\n\n" + str(e)) 
+        sms.alert_sms("(patches_helper.getPostsFromDB)")
         sys.exit() 
     logging.info("Database retrieval successful!") 
 

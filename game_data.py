@@ -23,3 +23,7 @@ hearthstone_conditions = ['hearthstone-update-']
 # CS:GO
 csgo_url = "http://blog.counter-strike.net/index.php/category/updates/"
 csgo_conditions = ['release notes for'] 
+
+# DOTA2
+dota2_url = "http://www.dota2.com/news/updates/"
+dota2_conditions = ['dota 2 update -']
