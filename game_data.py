@@ -1,6 +1,6 @@
 # PUBG
 pubg_url = "http://steamcommunity.com/games/578080/announcements"
-pubg_conditions = ['early access -', 'update']
+pubg_conditions = ['early access', 'update']
 
 # HotS
 hots_url = "http://us.battle.net/heroes/en/blog/"
