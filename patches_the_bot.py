@@ -90,6 +90,21 @@ def main():
                 logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
+    # Overwatch 
+    logging.info("Finding patch notes for Overwatch...")
+    soup = patches.makeSoup(gd.overwatch_url) 
+    posts = soup.find_all("a", class_="media-card")
+    for post in posts:
+        href = post['href']
+        name = post.find('div', class_="media-card-caption").find("h2", class_="media-card-title").string.replace('\n', '')
+        if(all(string in name.lower() for string in gd.overwatch_conditions)):
+            if(href not in savedHrefs): 
+                logging.info("Submitting: " + name)
+                patches.submit("Overwatch", "PC", href, name) 
+                savedHrefs.append(href) 
+                logged_events.append(name + " : " + href)   
+            else:
+                logging.info(name + " already found!")            
     # CS:GO
     logging.info("Finding patch notes for CS:GO")
     soup = patches.makeSoup(gd.csgo_url) 
