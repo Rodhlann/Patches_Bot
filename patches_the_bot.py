@@ -90,6 +90,24 @@ def main():
                 logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
+    # Overwatch 
+    logging.info("Finding patch notes for Overwatch...")
+    soup = patches.makeSoup(gd.overwatch_url) 
+    posts = soup.find_all("a", class_="ForumTopic")
+    for post in posts:
+        href = "https://us.battle.net" + post['href']
+        if post.find('span', class_="ForumTopic-title").string == None: 
+            continue 
+        else: 
+            name = post.find('span', class_="ForumTopic-title").string.strip() 
+        if(all(string in name.lower() for string in gd.overwatch_conditions)):
+            if(href not in savedHrefs):
+                logging.info("Submitting: " + name)
+                patches.submit("Overwatch", "PC", href, name) 
+                savedHrefs.append(href) 
+                logged_events.append(name + " : " + href)   
+            else:
+                logging.info(name + " already found!")          
     # CS:GO
     logging.info("Finding patch notes for CS:GO")
     soup = patches.makeSoup(gd.csgo_url) 
@@ -123,7 +141,7 @@ def main():
 
     logging.info("Finished finding patch notes!")
     email.success_email(logged_events) 
-    sms.success_sms(logged_events)
+    # sms.success_sms(logged_events)
 
 logging.info("-------------------"+str(dt.datetime.today())+"-------------------") 
 main() 

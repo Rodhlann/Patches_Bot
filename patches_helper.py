@@ -3,6 +3,7 @@ import datetime as dt
 import sys
 import os
 import logging
+# TODO: Phase out urllib 
 from urllib import request, error
 import praw
 from praw.exceptions import APIException
@@ -11,6 +12,8 @@ import pyrebase
 import config
 import email_handler as email
 import sms_handler as sms
+import requests
+import json 
 
 # -------- START GLOBALS ----------
 
@@ -89,8 +92,9 @@ def getPostsFromDB(user):
     try: 
         user = auth.refresh(user['refreshToken'])
         data = db.child("links").get()
-        for link in data.each():
-            savedHrefs.append(link.item[1]['link'])
+        if data.pyres != '':
+            for link in data.each():
+                savedHrefs.append(link.item[1]['link'])
     except Exception as e:
         logging.error(e)
         email.alert_email("(patches_helper.getPostsFromDB)\n\n" + str(e)) 

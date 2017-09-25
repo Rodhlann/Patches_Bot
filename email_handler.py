@@ -41,4 +41,4 @@ def send(subject, message):
         server.sendmail(sent_from, to, msg.as_string())
         server.close()
     except Exception as e:
-        logging.error("Email error:\n" + e)
+        logging.error("Email error:\n" + str(e))

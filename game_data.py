@@ -20,6 +20,10 @@ wow_conditions = ['patch-notes', 'hotfixes']
 hearthstone_url = "https://us.battle.net/hearthstone/en/blog/"
 hearthstone_conditions = ['hearthstone-update-']
 
+# Overwatch
+overwatch_url = "https://us.battle.net/forums/en/overwatch/21446648/"
+overwatch_conditions = ['[pc] overwatch patch notes']
+
 # CS:GO
 csgo_url = "http://blog.counter-strike.net/index.php/category/updates/"
 csgo_conditions = ['release notes for'] 

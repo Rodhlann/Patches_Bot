@@ -1,5 +1,6 @@
 from twilio.rest import Client
 import config
+import logging
 
 def alert_sms(error):
     header = "-\n\n-----------------\n\n" 
@@ -26,4 +27,4 @@ def send(message):
             from_=config.sms_from,
             body=message)
     except Exception as e: 
-        logging.error("SMS error:\n" + e)
+        logging.error("SMS error:\n" + str(e))
