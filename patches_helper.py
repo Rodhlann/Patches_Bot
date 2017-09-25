@@ -3,6 +3,7 @@ import datetime as dt
 import sys
 import os
 import logging
+# TODO: Phase out urllib 
 from urllib import request, error
 import praw
 from praw.exceptions import APIException
@@ -11,6 +12,8 @@ import pyrebase
 import config
 import email_handler as email
 import sms_handler as sms
+import requests
+import json 
 
 # -------- START GLOBALS ----------
 
@@ -44,8 +47,8 @@ def submit(game, platform, link, name):
     response = None
     while response == None:
         try:
-            response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
-            response.reply("Please message me if something is wrong with this post or you have any suggestions!")
+            # response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
+            # response.reply("Please message me if something is wrong with this post or you have any suggestions!")
             postToDB(user, link)
             logging.info(name + "' logged.")
             response = "Safeguard"
@@ -76,7 +79,7 @@ def postToDB(user, data):
     logging.info("Posting " + data + " to database...")
     try: 
         user = auth.refresh(user['refreshToken'])
-        db.child("links").push({"link": data}, user['idToken'])
+        db.child("shortLinks").push({"link": data}, user['idToken'])
     except Exception as e:
         logging.error(e)
         email.alert_email("(patches_helper.postToDB)\n\n" + str(e)) 
@@ -88,9 +91,10 @@ def getPostsFromDB(user):
     logging.info("Getting link data from database...")
     try: 
         user = auth.refresh(user['refreshToken'])
-        data = db.child("links").get()
-        for link in data.each():
-            savedHrefs.append(link.item[1]['link'])
+        data = db.child("shortLinks").get()
+        if data.pyres != '':
+            for link in data.each():
+                savedHrefs.append(link.item[1]['link'])
     except Exception as e:
         logging.error(e)
         email.alert_email("(patches_helper.getPostsFromDB)\n\n" + str(e)) 
@@ -103,4 +107,14 @@ def getSavedHrefs():
     # TODO: Figure out why USER variable isn't avaialble to getPostsFromDB
     getPostsFromDB(user) 
     return savedHrefs
+
+def shortenUrl(url): 
+    try: 
+        post_url = 'https://www.googleapis.com/urlshortener/v1/url?key=' + config.apiKey
+        payload = {'longUrl': url}
+        headers = {'content-type': 'application/json'}
+        return requests.post(post_url, data=json.dumps(payload), headers=headers).json()['id']
+    except Exception as e: 
+        logging.error(e)
+        sys.exit() 
     

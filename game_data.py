@@ -21,8 +21,8 @@ hearthstone_url = "https://us.battle.net/hearthstone/en/blog/"
 hearthstone_conditions = ['hearthstone-update-']
 
 # Overwatch
-overwatch_url = "https://playoverwatch.com/en-us/blog/"
-overwatch_conditions = ['overwatch patch notes']
+overwatch_url = "https://us.battle.net/forums/en/overwatch/21446648/"
+overwatch_conditions = ['[pc] overwatch patch notes']
 
 # CS:GO
 csgo_url = "http://blog.counter-strike.net/index.php/category/updates/"

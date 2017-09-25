@@ -23,6 +23,7 @@ def main():
         href = post['href']
         name = post.string
         if(all(string in name.lower() for string in gd.pubg_conditions)):
+            href = patches.shortenUrl(href) 
             if(href not in savedHrefs):
                 logging.info("Submitting: " + name)
                 patches.submit("PlayerUnknown's Battlegrounds", "PC", href, name)
@@ -35,9 +36,10 @@ def main():
     soup = patches.makeSoup(gd.hots_url) 
     posts = soup.find_all(class_="news-list__item__title")
     for post in posts:
-        href = "http://us.battle.net" + post.find('a')['href']
+        href = "http://us.battle.net" + post.find('a')['href'] 
         name = post.find('a').string.replace('\n', '')
         if(any(string in href.lower() for string in gd.hots_conditions)):
+            href = patches.shortenUrl(href)
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Heroes of the Storm", "PC", href, name) 
@@ -50,9 +52,10 @@ def main():
     soup = patches.makeSoup(gd.lol_url) 
     posts = soup.find_all("h4")
     for post in posts:
-        href = "http://eune.leagueoflegends.com" + post.find('a')['href']
+        href = "http://eune.leagueoflegends.com" + post.find('a')['href'] 
         name = post.find('a').string.replace('\n', '')
         if(any(string in href.lower() for string in gd.lol_conditions)):
+            href = patches.shortenUrl(href)
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("League of Legends", "PC", href, name) 
@@ -68,6 +71,7 @@ def main():
         href = "https://worldofwarcraft.com" + post.find('a')['href']
         name = post.find(class_="NewsBlog-title").string.replace('\n', '')
         if(any(string in href.lower() for string in gd.wow_conditions)):
+            href = patches.shortenUrl(href) 
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("World of Warcraft", "PC", href, name) 
@@ -80,9 +84,10 @@ def main():
     soup = patches.makeSoup(gd.hearthstone_url) 
     posts = soup.find_all("h3", class_="article-title")
     for post in posts:
-        href = "https://us.battle.net" + post.find('a')['href']
+        href = "https://us.battle.net" + post.find('a')['href'] 
         name = post.find('a').string.replace('\n', '')
         if(any(string in href.lower() for string in gd.hearthstone_conditions)):
+            href = patches.shortenUrl(href)
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Hearthstone", "PC", href, name) 
@@ -93,11 +98,12 @@ def main():
     # Overwatch 
     logging.info("Finding patch notes for Overwatch...")
     soup = patches.makeSoup(gd.overwatch_url) 
-    posts = soup.find_all("a", class_="media-card")
+    posts = soup.find_all("a", class_="ForumTopic")
     for post in posts:
-        href = post['href']
-        name = post.find('div', class_="media-card-caption").find("h2", class_="media-card-title").string.replace('\n', '')
+        href = "https://us.battle.net" + post['href']
+        name = post.find('span', class_="ForumTopic-title").string.strip()
         if(all(string in name.lower() for string in gd.overwatch_conditions)):
+            href = patches.shortenUrl(href)
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Overwatch", "PC", href, name) 
@@ -113,6 +119,7 @@ def main():
         href = post.find('h2').find('a')['href']
         name = post.find('h2').find('a').string.replace('\n', '')
         if(all(string in name.lower() for string in gd.csgo_conditions)):
+            href = patches.shortenUrl(href) 
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("Counter Strike: Global Offensive", "PC", href, name) 
@@ -125,9 +132,10 @@ def main():
     soup = patches.makeSoup(gd.dota2_url) 
     posts = soup.find_all("h2", class_="entry-title")
     for post in posts:
-        href = post.find('a')['href']
+        href = post.find('a')['href'] 
         name = post.find('a').string.replace('\n', '')
         if(all(string in name.lower() for string in gd.dota2_conditions)):
+            href = patches.shortenUrl(href)
             if(href not in savedHrefs): 
                 logging.info("Submitting: " + name)
                 patches.submit("DOTA 2", "PC", href, name) 
@@ -138,7 +146,7 @@ def main():
 
     logging.info("Finished finding patch notes!")
     email.success_email(logged_events) 
-    sms.success_sms(logged_events)
+    # sms.success_sms(logged_events)
 
 logging.info("-------------------"+str(dt.datetime.today())+"-------------------") 
 main() 

@@ -4,3 +4,4 @@ serviceAccount.json
 config.py
 __pycache__/
 .vscode/
+posts.py
