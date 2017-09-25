@@ -47,8 +47,8 @@ def submit(game, platform, link, name):
     response = None
     while response == None:
         try:
-            # response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
-            # response.reply("Please message me if something is wrong with this post or you have any suggestions!")
+            response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
+            response.reply("Please message me if something is wrong with this post or you have any suggestions!")
             postToDB(user, link)
             logging.info(name + "' logged.")
             response = "Safeguard"

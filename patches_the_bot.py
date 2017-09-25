@@ -101,7 +101,10 @@ def main():
     posts = soup.find_all("a", class_="ForumTopic")
     for post in posts:
         href = "https://us.battle.net" + post['href']
-        name = post.find('span', class_="ForumTopic-title").string.strip()
+        if post.find('span', class_="ForumTopic-title").string == None: 
+            continue 
+        else: 
+            name = post.find('span', class_="ForumTopic-title").string.strip() 
         if(all(string in name.lower() for string in gd.overwatch_conditions)):
             href = patches.shortenUrl(href)
             if(href not in savedHrefs): 
