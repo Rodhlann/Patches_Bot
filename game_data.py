@@ -31,3 +31,7 @@ csgo_conditions = ['release notes for']
 # DOTA2
 dota2_url = "http://www.dota2.com/news/updates/"
 dota2_conditions = ['dota 2 update -']
+
+# Destiny2
+destiny2_url = "https://www.bungie.net/en/Explore/Category?category=Updates"
+destiny2_conditions = ['hotfix', 'update']
