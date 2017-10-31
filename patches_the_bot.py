@@ -138,6 +138,21 @@ def main():
                 logged_events.append(name + " : " + href)   
             else:
                 logging.info(name + " already found!")
+    # Destiny2 
+    logging.info("Finding patch notes for Destiny 2")
+    soup = patches.makeSoup(gd.destiny2_url)
+    posts = soup.find_all("a", class_="update")
+    for post in posts:
+        href = 'https://www.bungie.net' + post['href']
+        name = post.find('div', class_="title").string.replace('\n', '')
+        if(any(string in name.lower() for string in gd.destiny2_conditions)):
+            if(href not in savedHrefs): 
+                logging.info("Submitting: " + name)
+                patches.submit("Destiny 2", "ALL", href, name) 
+                savedHrefs.append(href) 
+                logged_events.append(name + " : " + href)   
+            else:
+                logging.info(name + " already found!")
 
     logging.info("Finished finding patch notes!")
     email.success_email(logged_events) 
