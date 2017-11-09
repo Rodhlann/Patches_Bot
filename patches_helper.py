@@ -62,8 +62,8 @@ def submit(game, platform, link, name):
             else:
                 print(e)
                 logging.error(e)
-                #email.alert_email("(patches_helper.submit)\n\n" + str(e)) 
-                #sms.alert_sms("(patches_helper.submit)")
+                email.alert_email("(patches_helper.submit)\n\n" + str(e)) 
+                sms.alert_sms("(patches_helper.submit)")
                 sys.exit() 
             time.sleep(30)
     logging.info("Submission complete!")
