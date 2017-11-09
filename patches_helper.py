@@ -14,6 +14,8 @@ import email_handler as email
 import sms_handler as sms
 import requests
 import json 
+import discord
+import asyncio
 
 # -------- START GLOBALS ----------
 
@@ -49,16 +51,19 @@ def submit(game, platform, link, name):
         try:
             response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
             response.reply("Please message me if something is wrong with this post or you have any suggestions!")
+            if game == "Destiny 2":
+                postToDiscord(link)
             postToDB(user, link)
             logging.info(name + "' logged.")
             response = "Safeguard"
         except Exception as e:
-            if e.error_type == 'RATELIMIT':
+            if hasattr(e, 'error_type') and e.error_type == 'RATELIMIT':
                 logging.warning(e.message)
             else:
+                print(e)
                 logging.error(e)
-                email.alert_email("(patches_helper.submit)\n\n" + str(e)) 
-                sms.alert_sms("(patches_helper.submit)")
+                #email.alert_email("(patches_helper.submit)\n\n" + str(e)) 
+                #sms.alert_sms("(patches_helper.submit)")
                 sys.exit() 
             time.sleep(30)
     logging.info("Submission complete!")
@@ -107,4 +112,18 @@ def getSavedHrefs():
     # TODO: Figure out why USER variable isn't avaialble to getPostsFromDB
     getPostsFromDB(user) 
     return savedHrefs
-    
+
+def postToDiscord(url):
+    try:
+        client = discord.Client()
+        
+        @client.event
+        async def on_ready():
+            channel = client.get_channel('378280902226083850')
+            await client.send_message(channel, url)
+            await client.logout()
+        client.run('Mzc4MjYzNTA3NDcwMTIzMDEw.DOZDEw.7mTsVSmacGznTie338fC0LhmqcY')
+    except Exception as e: 
+        logging.error(e)
+        email.alert_email("(patches_helper.postToDiscord)\n\n" + str(e)) 
+        sms.alert_sms("(patches_helper.postToDiscord)")

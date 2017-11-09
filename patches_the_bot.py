@@ -156,7 +156,6 @@ def main():
 
     logging.info("Finished finding patch notes!")
     email.success_email(logged_events) 
-    # sms.success_sms(logged_events)
 
 logging.info("-------------------"+str(dt.datetime.today())+"-------------------") 
 main() 
