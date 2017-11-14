@@ -51,8 +51,7 @@ def submit(game, platform, link, name):
         try:
             response = reddit.subreddit("patchnotes").submit(formatTitle(game, name, platform), url=link)
             response.reply("Please message me if something is wrong with this post or you have any suggestions!")
-            if game == "Destiny 2":
-                postToDiscord(link)
+            handleDiscordPost(game, link)
             postToDB(user, link)
             logging.info(name + "' logged.")
             response = "Safeguard"
@@ -113,16 +112,24 @@ def getSavedHrefs():
     getPostsFromDB(user) 
     return savedHrefs
 
-def postToDiscord(url):
+def handleDiscordPost(game, url):
+    channel_id_list = []
+    for client in config.discord_clients: 
+        if game in client[0]: 
+            channel_id_list.append(client[1])
+    postToDiscord(url, channel_id_list)
+
+def postToDiscord(url, channel_id_list):
     try:
         client = discord.Client()
-        
+        # Forces new event loop (handles defect where event loop wasn't being reset properly)
+        asyncio.set_event_loop(asyncio.new_event_loop())
         @client.event
         async def on_ready():
-            channel = client.get_channel('378280902226083850')
-            await client.send_message(channel, url)
-            await client.logout()
-        client.run('Mzc4MjYzNTA3NDcwMTIzMDEw.DOZDEw.7mTsVSmacGznTie338fC0LhmqcY')
+            for channel_id in channel_id_list: 
+                await client.send_message(client.get_channel(channel_id), url)
+            await client.close()
+        client.run(config.discord_client)
     except Exception as e: 
         logging.error(e)
         email.alert_email("(patches_helper.postToDiscord)\n\n" + str(e)) 
